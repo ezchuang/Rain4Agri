@@ -8,6 +8,7 @@ on:
 jobs:
   fetch-weather:
     runs-on: ubuntu-latest
+    environment: CWB_crawler
 
     steps:
       - name: Checkout code
