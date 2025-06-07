@@ -27,7 +27,7 @@ jobs:
         env:
           CWB_API_KEY: ${{ secrets.CWB_API_KEY }}
         run: |
-          cwa_now_data_crawler.py
+          python cwa_now_data_crawler.py
 
       - name: Commit & push data
         run: |
