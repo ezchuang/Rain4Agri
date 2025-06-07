@@ -1,0 +1,42 @@
+name: Fetch Taiwan Weather Data
+
+# 定期執行：every hour
+on:
+  schedule:
+    - cron: '0 * * * *'
+  workflow_dispatch:     # 可以手動觸發
+
+jobs:
+  fetch-weather:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.x'
+
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt
+
+      - name: Fetch weather data
+        env:
+          CWB_API_KEY: ${{ secrets.CWB_API_KEY }}
+        run: |
+          python fetch_weather.py
+
+      # （可選）如果要把結果 push 回 repo
+      - name: Commit & push data
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add data/now_data/
+          git commit -m "Auto-update weather data"
+          git push
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
