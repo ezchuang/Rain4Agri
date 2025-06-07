@@ -14,7 +14,7 @@ if not API_KEY:
     raise RuntimeError("Please set the environment variable CWB_API_KEY to your CWB API Key.")
 
 BASE_URL = "https://opendata.cwa.gov.tw/api/v1/rest/datastore"
-NOW_DATA_FOLDER = "./data/now_data_github"
+NOW_DATA_FOLDER = "./now_data_github"
 os.makedirs(NOW_DATA_FOLDER, exist_ok=True)
 
 

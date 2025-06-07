@@ -37,7 +37,7 @@ jobs:
           git fetch
           git checkout feature/get-data-crawler
           git merge main
-          git add data/now_data_github/
+          git add now_data_github/
           git commit -m "Auto-update weather data"
           git push origin feature/get-data-crawler
         env:
