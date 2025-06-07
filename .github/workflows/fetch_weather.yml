@@ -5,10 +5,13 @@ on:
   schedule:
     - cron: '0 * * * *'
   workflow_dispatch:     # 可以手動觸發
+    branches:
+      - 'feature/get-data-crawler'
 
 jobs:
   fetch-weather:
     runs-on: ubuntu-latest
+    if: github.ref == 'refs/heads/feature/get-data-crawler'
 
     steps:
       - name: Checkout code
@@ -35,7 +38,7 @@ jobs:
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git add data/now_data/
+          git add data_github/now_data/
           git commit -m "Auto-update weather data"
           git push
         env:
