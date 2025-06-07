@@ -9,7 +9,6 @@ on:
 jobs:
   fetch-weather:
     runs-on: ubuntu-latest
-    if: github.ref == 'refs/heads/feature/get-data-crawler'
 
     steps:
       - name: Checkout code
