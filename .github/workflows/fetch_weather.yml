@@ -1,6 +1,5 @@
 name: Fetch Taiwan Weather Data
 
-# 定期執行：every hour
 on:
   schedule:
     - cron: '0 * * * *'
