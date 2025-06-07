@@ -1,17 +1,14 @@
 name: Fetch Taiwan Weather Data
 
-# 定期執行：every hour
 on:
   schedule:
     - cron: '0 * * * *'
-  workflow_dispatch:     # 可以手動觸發
-    branches:
-      - 'feature/get-data-crawler'
+  workflow_dispatch:
 
 jobs:
   fetch-weather:
     runs-on: ubuntu-latest
-    if: github.ref == 'refs/heads/feature/get-data-crawler'
+    environment: CWB_crawler
 
     steps:
       - name: Checkout code
@@ -31,7 +28,7 @@ jobs:
         env:
           CWB_API_KEY: ${{ secrets.CWB_API_KEY }}
         run: |
-          cwa_now_data_crawler.py
+          python cwa_now_data_crawler.py
 
       - name: Commit & push data
         run: |
