@@ -4,9 +4,7 @@ name: Fetch Taiwan Weather Data
 on:
   schedule:
     - cron: '0 * * * *'
-  workflow_dispatch:     # 可以手動觸發
-    branches:
-      - 'feature/get-data-crawler'
+  workflow_dispatch:
 
 jobs:
   fetch-weather:
