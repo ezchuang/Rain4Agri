@@ -29,7 +29,7 @@ def fetch_data(dataset_id: str) -> List[Dict[str, Any]]:
         "Authorization": API_KEY,
         "format": "JSON"
     }
-    resp = requests.get(url, params=params, timeout=10)
+    resp = requests.get(url, params=params, timeout=10, verify=False)
     if resp.status_code != 200:
         raise RuntimeError(f"Failed to fetch {dataset_id}: HTTP {resp.status_code}")
     data = resp.json()
