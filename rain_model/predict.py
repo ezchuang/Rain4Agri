@@ -42,7 +42,7 @@ def predict():
     # For prediction, we might want to run on the whole dataset or a test split
     # Here we use 'test' mode (which is just full dataset in dataset.py for now, or we can modify)
     # Let's assume we want to predict for the last N days.
-    dataset = RainDataset(mode='test')
+    dataset = RainDataset(split='test', log_transform=True)
     loader = DataLoader(dataset, batch_size=1, shuffle=False)
     
     results = []
@@ -66,6 +66,9 @@ def predict():
                 pred_rain = preds[:, :, 3:4] # (B, Pred, 1, H, W)
             else:
                 pred_rain = preds # (B, Pred, 1, H, W)
+            
+            # Inverse Log Transform: exp(x) - 1
+            pred_rain = torch.expm1(pred_rain)
                 
             # Convert back to Station Values
             # We need to look up station coordinates and extract values

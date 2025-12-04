@@ -11,8 +11,9 @@ import glob
 from . import config
 
 class RainDataset(Dataset):
-    def __init__(self, mode='train'):
-        self.mode = mode
+    def __init__(self, split='train', log_transform=True):
+        self.split = split
+        self.log_transform = log_transform
         self.station_info = self._load_station_info()
         self.df_data = self._load_station_data()
         self.image_paths = self._index_images()
@@ -20,13 +21,36 @@ class RainDataset(Dataset):
         # Get all unique timestamps from station data
         self.timestamps = sorted(self.df_data['DataTime'].unique())
         
-        # Filter timestamps to ensure we have enough history and future
-        # For training, we need SEQ_LEN history + PRED_LEN future
-        # For inference, we might just need history
-        if mode == 'train':
-            self.valid_indices = range(config.SEQ_LEN, len(self.timestamps) - config.PRED_LEN)
+        # Split timestamps: 80% Train, 20% Val
+        # We split by time to avoid data leakage
+        n_total = len(self.timestamps)
+        split_idx = int(n_total * 0.8)
+        
+        # Define valid ranges
+        # We need to ensure [idx - SEQ_LEN + 1, idx + PRED_LEN] are within bounds
+        # Train: [0, split_idx]
+        # Val: [split_idx, end]
+        
+        if split == 'train':
+            # Use DATA_STRIDE to downsample training data
+            # End at split_idx - PRED_LEN to ensure targets exist within train set
+            # Start at SEQ_LEN
+            self.valid_indices = range(config.SEQ_LEN, split_idx - config.PRED_LEN, config.DATA_STRIDE)
+        elif split == 'val':
+            # Validation: Start after split_idx
+            # Ensure we have history (SEQ_LEN) from before split_idx if needed, 
+            # but to be safe and clean, let's start at split_idx + SEQ_LEN
+            start_idx = split_idx + config.SEQ_LEN
+            end_idx = n_total - config.PRED_LEN
+            if start_idx < end_idx:
+                self.valid_indices = range(start_idx, end_idx, config.DATA_STRIDE) # Can use stride 1 for val if desired
+            else:
+                self.valid_indices = []
+        elif split == 'test' or split == 'all':
+            # Test/Inference: Use all possible indices
+            self.valid_indices = range(config.SEQ_LEN, n_total)
         else:
-            self.valid_indices = range(config.SEQ_LEN, len(self.timestamps))
+            raise ValueError(f"Unknown split: {split}")
 
     def _load_station_info(self):
         """Load station coordinates from JSON."""
@@ -169,12 +193,16 @@ class RainDataset(Dataset):
         input_imgs = torch.stack(input_imgs)
         input_station_grids = torch.stack(input_station_grids)
         
+        # Apply Log Transform to Inputs
+        if self.log_transform:
+            input_station_grids = torch.log1p(input_station_grids)
+        
         # 2. Target Sequences (Future)
         # [T + 1, ..., T + PredLen]
         target_grids = []
         masks = []
         
-        if self.mode == 'train':
+        if self.split in ['train', 'val']:
             for i in range(config.PRED_LEN):
                 t_idx = curr_idx + 1 + i
                 t = self.timestamps[t_idx]
@@ -196,6 +224,10 @@ class RainDataset(Dataset):
             
             target_grids = torch.stack(target_grids)
             masks = torch.stack(masks)
+            
+            # Apply Log Transform to Targets
+            if self.log_transform:
+                target_grids = torch.log1p(target_grids)
             
             # Also get future images for Explicit Model (Auxiliary Loss)
             target_imgs = []
