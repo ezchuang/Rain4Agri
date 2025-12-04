@@ -16,7 +16,8 @@ GRID_SIZE = (128, 128) # Output grid size
 SEQ_LEN = 12           # Input sequence length (e.g., past 12 steps)
 PRED_LEN = 12          # Prediction sequence length (e.g., future 12 steps)
 BATCH_SIZE = 8
-NUM_WORKERS = 4
+NUM_WORKERS = 0        # Set to 0 for Windows compatibility
+DATA_STRIDE = 6        # Sample every 6th timestamp (e.g., every 6 hours) to reduce training time
 
 # --- Model Parameters ---
 HIDDEN_DIM = 64
