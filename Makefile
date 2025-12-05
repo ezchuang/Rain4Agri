@@ -20,6 +20,11 @@ help:
 data-report:
 	$(PYTHON) -m data_report
 
+# Run the full data pipeline (Crawler -> Cleaning)
+data-pipeline:
+	$(PYTHON) run_pipeline.py $(ARGS)
+
+
 train-implicit:
 	$(PYTHON) -m rain_model.train_implicit $(ARGS)
 
