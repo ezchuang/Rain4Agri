@@ -9,7 +9,7 @@ STATIONS_FILE  = "./data/web_api/stations_valid.txt"
 STATION_LIST   = "./data/web_api/station_list.json"
 BASE_API       = "https://codis.cwa.gov.tw/api/station?"
 OUTPUT_ROOT    = "./data/his_data"
-DAYS_BACK     = 180    # 往前抓半年
+DAYS_BACK     = 5    # 往前抓 5 天 (快速更新)
 DELAY_SECONDS = 0.0    # 每次請求後暫停 1 秒
 STATION_DELAY = 0.0    # 每換一個 station 暫停 5 秒
 # ---------------

@@ -15,7 +15,7 @@ BBOX_TAIWAN = (119.5, 21.5, 122.5, 25.5)
 # 輸出資料夾
 OUTPUT_DIR = "./data/satellite"
 # 往前抓取天數、每隔幾小時取一張
-DAYS_BACK      = 180
+DAYS_BACK      = 5
 INTERVAL_HOURS = 3
 IMAGE_SIZE     = (1024, 1024)  # 輸出影像解析度
 
